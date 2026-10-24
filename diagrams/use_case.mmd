@@ -1,0 +1,25 @@
+flowchart LR
+    U([User])
+    A([Administrator])
+    subgraph System[Local Spreadsheet AI System]
+        UC1(Log in with token)
+        UC2(Upload Excel file)
+        UC3(View table schema and preview)
+        UC4(Ask question in natural language)
+        UC5(View answer and generated code)
+        UC6(Generate formula)
+        UC7(Clean data and export)
+        UC8(Download result)
+        UC9(Manage users and tokens)
+        UC10(View audit log)
+    end
+    U --> UC1
+    U --> UC2
+    U --> UC3
+    U --> UC4
+    U --> UC5
+    U --> UC6
+    U --> UC7
+    U --> UC8
+    A --> UC9
+    A --> UC10

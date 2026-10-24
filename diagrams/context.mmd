@@ -1,0 +1,13 @@
+flowchart LR
+    U[User: analyst / accountant]
+    A[Administrator]
+    S((Local Spreadsheet AI System))
+    L[Local LLM runtime - Ollama]
+    F[(Local file storage)]
+    X[External cloud services]
+    U -- upload Excel file, ask question --> S
+    S -- answer, code, cleaned file --> U
+    A -- manage users, view audit log --> S
+    S -- prompt / response --> L
+    S -- read / write files --> F
+    S -. no data sent .-x X
