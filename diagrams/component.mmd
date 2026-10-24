@@ -1,0 +1,21 @@
+flowchart TB
+    UI[Web UI - Streamlit]
+    API[Backend API - FastAPI]
+    AUTH[Auth and access control]
+    TP[Excel reader and writer - openpyxl, pandas]
+    PB[Prompt builder and response parser]
+    LLM[LLM runtime - Ollama]
+    SB[Sandbox executor - Docker, no network]
+    VER[Result verifier]
+    AUD[(Audit log - SQLite)]
+    FS[(File storage)]
+    UI --> API
+    API --> AUTH
+    API --> TP
+    TP --> FS
+    API --> PB
+    PB --> LLM
+    PB --> SB
+    SB --> VER
+    VER --> API
+    API --> AUD
