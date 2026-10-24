@@ -1,0 +1,16 @@
+.env
+*.key
+*.pem
+secrets/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+data/real/
+*.gguf
+models/
+uploads/
+.DS_Store
+.idea/
+.vscode/
