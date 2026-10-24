@@ -29,8 +29,7 @@ Technologies
 Python, Ollama, FastAPI, openpyxl, pandas, Streamlit, Docker for running generated code safely, SQLite, pytest and Git. The reasons are in docs/technology_comparison.md.
 
 Links
-YouTrack: paste the link here
-Prototype: prototype/mockups.md
+YouTrack: (https://damirzarkesh.youtrack.cloud/issues)
 
 Documents
 Proposal and scope: docs/proposal.md
