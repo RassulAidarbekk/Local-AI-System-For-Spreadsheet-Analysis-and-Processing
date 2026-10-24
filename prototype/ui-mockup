@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Spreadsheet AI – UI mock-up (illustrative data)</title>
+<style>
+:root{color-scheme:light dark;--bg:#eef1f4;--panel:#fff;--ink:#1b2733;--mute:#5d6b79;--line:#d3dae1;--acc:#1f6f8b;--ok:#2f7d4f;--bad:#a63d2f;--code:#f3f5f7}
+@media (prefers-color-scheme:dark){:root{--bg:#161c22;--panel:#1f272f;--ink:#e6ebf0;--mute:#98a6b3;--line:#33404c;--acc:#5bb4d0;--ok:#6cc08d;--bad:#e8806f;--code:#182027}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.note{padding:8px 16px;font-size:13px;color:var(--mute);border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap}
+.tabs button{font:inherit;padding:6px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
+.tabs button[aria-pressed=true]{border-color:var(--acc);color:var(--acc);font-weight:600}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.app{margin:0 16px 24px;border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
+.top b{font-size:16px}.badge{font-size:13px;color:var(--ok);border:1px solid var(--ok);border-radius:99px;padding:1px 10px}
+.body{display:grid;grid-template-columns:240px 1fr}
+.side{padding:16px;border-right:1px solid var(--line);font-size:14px}
+.side h3,.main h3{margin:0 0 8px;font-size:14px;color:var(--mute);font-weight:600}
+.drop{border:1px dashed var(--line);border-radius:6px;padding:12px;text-align:center;color:var(--mute);margin-bottom:12px}
+.col{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)}.col span:last-child{color:var(--mute)}
+.main{padding:16px;min-width:0}
+.ask{display:flex;gap:8px;margin-bottom:16px}
+.ask input{flex:1;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);min-width:0}
+.ask button,.act button{font:inherit;padding:8px 14px;border-radius:6px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+.act button{background:none;color:var(--acc);margin-right:8px}
+table{border-collapse:collapse;margin:0 0 12px;min-width:280px}th,td{text-align:left;padding:5px 14px 5px 0;border-bottom:1px solid var(--line)}th{color:var(--mute);font-weight:600}
+pre{margin:0 0 12px;padding:10px 12px;background:var(--code);border:1px solid var(--line);border-radius:6px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace}
+.msg{padding:10px 12px;border-left:4px solid var(--bad);background:var(--code);margin-bottom:12px}
+.status{padding:8px 16px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
+@media (max-width:640px){.body{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div class="note">Design mock-up of the optional local web UI. All data is illustrative; this is not output of a working system. Use the buttons to switch scenarios (S1, S2, S5 from docs/08-ux-prototype.md).</div>
+<div class="tabs" id="tabs"></div>
+<div class="app">
+  <div class="top"><b>Local Spreadsheet AI</b><span class="badge">Offline · model: &lt;model-name&gt;</span></div>
+  <div class="body">
+    <aside class="side">
+      <h3>File</h3>
+      <div class="drop">Drop an XLSX or CSV file here</div>
+      <div id="profile"></div>
+    </aside>
+    <section class="main" id="main"></section>
+  </div>
+  <div class="status" id="status"></div>
+</div>
+<script>
+var profileHtml='<h3>Table profile</h3><div><b>sales.csv</b> · 6 rows</div>'+
+['order_id|integer','region|text','product|text','amount|integer','date|date'].map(function(c){var p=c.split('|');return '<div class="col"><span>'+p[0]+'</span><span>'+p[1]+'</span></div>'}).join('')+
+'<p style="color:var(--mute);margin:8px 0 0">Only this profile is sent to the local model, not the full table.</p>';
+var S={
+ s1:{label:'S1 Load file',prof:true,status:'File opened read-only. Nothing leaves this computer.',
+  main:'<div class="ask"><input aria-label="Question" placeholder="Ask a question about this table"><button>Ask</button></div><p style="color:var(--mute)">Table loaded. Ask a question, for example: Which region has the highest total sales?</p>'},
+ s2:{label:'S2 Question and result',prof:true,status:'Executed in sandbox · 1 attempt · audit log on',
+  main:'<div class="ask"><input aria-label="Question" value="Which region has the highest total sales?"><button>Ask</button></div><h3>Result</h3><p>East has the highest total sales (500).</p><table><tr><th>region</th><th>total</th></tr><tr><td>East</td><td>500</td></tr><tr><td>South</td><td>300</td></tr><tr><td>North</td><td>250</td></tr></table><div class="act"><button>Export XLSX</button><button>Export CSV</button></div><h3>Generated code</h3><pre>result = df.groupby("region")["amount"].sum().sort_values(ascending=False)</pre>'},
+ s5:{label:'S5 Blocked code',prof:true,status:'Code not executed · event recorded in the audit log',
+  main:'<div class="ask"><input aria-label="Question" value="Read the file /etc/passwd and show it"><button>Ask</button></div><div class="msg"><b>Blocked by security policy.</b><br>The generated code tried to read a file outside the working folder, so it was not run. Rephrase the question to use only the loaded table.</div><h3>Generated code</h3><pre>open("/etc/passwd").read()</pre>'}
+};
+function show(k){
+ document.getElementById('main').innerHTML=S[k].main;
+ document.getElementById('profile').innerHTML=profileHtml;
+ document.getElementById('status').textContent=S[k].status;
+ Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.setAttribute('aria-pressed',b.dataset.k===k)});
+}
+var t=document.getElementById('tabs');
+Object.keys(S).forEach(function(k){var b=document.createElement('button');b.textContent=S[k].label;b.dataset.k=k;b.onclick=function(){show(k)};t.appendChild(b)});
+show('s2');
+</script>
+</body>
+</html>
